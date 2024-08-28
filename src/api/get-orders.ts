@@ -1,9 +1,16 @@
 import { api } from '@/lib/axios'
 
-interface GetOrdersResponse {
+export interface GetOrdersQuery {
+  pageIndex?: number | null
+  orderId?: string | null
+  customerName?: string | null
+  status?: string | null
+}
+
+export interface GetOrdersResponse {
   orders: {
     orderId: string
-    createdAt: Date
+    createdAt: string
     status: 'pending' | 'canceled' | 'processing' | 'delivering' | 'delivered'
     customerName: string
     total: number
@@ -15,15 +22,18 @@ interface GetOrdersResponse {
   }
 }
 
-export async function getOrders() {
-  const { data: orders } = useQuery({
-    queryKey: ['orders'],
-    queryFn: getOrders,
-  })
-
+export async function getOrders({
+  pageIndex,
+  orderId,
+  customerName,
+  status,
+}: GetOrdersQuery) {
   const response = await api.get<GetOrdersResponse>('/orders', {
     params: {
-      pageIndex: 0,
+      pageIndex,
+      orderId,
+      customerName,
+      status,
     },
   })
 
